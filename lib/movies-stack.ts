@@ -1,4 +1,3 @@
-import { Bucket, EventType } from 'aws-cdk-lib/aws-s3';
 import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Cors, LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
@@ -6,6 +5,7 @@ import { ManagedPolicy, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Bucket, EventType } from 'aws-cdk-lib/aws-s3';
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -95,6 +95,7 @@ export class MoviesStack extends Stack {
     return new LogGroup(this, `Movies-Lambda-LogGroup-${lambdaName}`, {
       retention: RetentionDays.ONE_MONTH,
       logGroupName: `Movie-Stack-${lambdaName}-LogGroup`,
+      removalPolicy: RemovalPolicy.DESTROY
     })
   }
 
