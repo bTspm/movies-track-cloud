@@ -92,7 +92,7 @@ export class MoviesStack extends Stack {
   }
 
   private _createLambdaLogGroup(lambdaName: string): LogGroup {
-    return new LogGroup(this, "", {
+    return new LogGroup(this, `Movies-Lambda-LogGroup-${lambdaName}`, {
       retention: RetentionDays.ONE_MONTH,
       logGroupName: `Movie-Stack-${lambdaName}-LogGroup`,
     })
