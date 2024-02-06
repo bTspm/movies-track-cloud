@@ -5,7 +5,7 @@ import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { ManagedPolicy, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -53,6 +53,7 @@ export class MoviesStack extends Stack {
 
     return new NodejsFunction(this, `Movies-${name}Lambda`, {
       ...MoviesStack._defaultLambdaProps(this.tableName),
+      logGroup: this._createLambdaLogGroup(name),
       entry: path.join(__dirname, '../src/lambdas', entryFile),
       functionName: `movies-${ name }-lambda`,
       role: lambdaRole,
@@ -90,15 +91,20 @@ export class MoviesStack extends Stack {
     bucket.grantRead(lambdaFunction);
   }
 
+  private _createLambdaLogGroup(lambdaName: string): LogGroup {
+    return new LogGroup(this, "", {
+      retention: RetentionDays.ONE_MONTH,
+      logGroupName: `Movie-Stack-${lambdaName}-LogGroup`,
+    })
+  }
+
   private static _defaultLambdaProps(tableName: string): Partial<NodejsFunctionProps> {
     return {
       handler: 'handler',
       environment: {
         TABLE_NAME: tableName,
       },
-      logRetention: RetentionDays.ONE_MONTH,
-      logRetentionRetryOptions: { maxRetries: 10, base: Duration.millis(200) },
-      runtime: Runtime.NODEJS_18_X,
+      runtime: Runtime.NODEJS_20_X,
       timeout: Duration.minutes(15),
       memorySize: 1024,
     };
