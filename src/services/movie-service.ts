@@ -50,7 +50,9 @@ export const movieService = (): MovieServiceResponse => {
     const genres = genre_ids.map((id) => allGenres[id])
     const providers = await _getProviders(tmdbId);
 
-    enrichedMovies.push({ ...movieRequest, description: overview, genres, providers, image: poster_path, tmdbId })
+    const description = (movieRequest.description && movieRequest.description.length > 0) ? movieRequest.description : overview
+    const image = (movieRequest.image && movieRequest.image.length > 0) ? movieRequest.image : poster_path
+    enrichedMovies.push({ ...movieRequest, description, genres, providers, image, tmdbId })
   };
 
   const _getProviders = async (tmdbMovieId: number): Promise<string[]> => {
@@ -59,7 +61,7 @@ export const movieService = (): MovieServiceResponse => {
 
     const { results } = response.data
     const flatrate = results.US?.flatrate ?? []
-    const cleanedProviders = flatrate.map((providerType) => providerType.provider_name.replace(/( Apple TV Channel| Amazon Channel| Roku Premium Channel| basic with Ads)/g, ""))
+    const cleanedProviders = flatrate.map((providerType) => providerType.provider_name)
 
     return [...new Set(cleanedProviders)];
   }

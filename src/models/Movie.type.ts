@@ -19,4 +19,7 @@ export type Movie = BaseMovie & {
   tmdbId?: number
 };
 
-export type MovieRequest = BaseMovie;
+export type MovieRequest = BaseMovie & {
+  description: string;
+  image: string
+};
