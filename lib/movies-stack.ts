@@ -35,7 +35,7 @@ export class MoviesStack extends Stack {
     return new Table(this, 'Movies-Table', {
       tableName: this.tableName,
       billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: { name: 'year', type: AttributeType.NUMBER },
+      partitionKey: { name: 'pk', type: AttributeType.STRING },
       sortKey: { name: 'code', type: AttributeType.STRING },
       removalPolicy: RemovalPolicy.DESTROY,
     });

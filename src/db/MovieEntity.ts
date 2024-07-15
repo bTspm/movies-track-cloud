@@ -5,8 +5,9 @@ export const MovieEntity = new Entity({
   name: "Movie",
 
   attributes: {
-    year: { partitionKey: true, type: "number" },
+    pk: { partitionKey: true, default: "MOVIE" },
     code: { sortKey: true, type: "string" },
+    year: { type: "number", required: true },
     description: { type: 'string', required: false },
     genres: { type: 'list', required: false },
     image: { type: 'string', required: false },

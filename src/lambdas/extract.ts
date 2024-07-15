@@ -1,6 +1,7 @@
 import { S3Event } from 'aws-lambda';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-import { dbService, movieService } from "../services";
+import { movieService } from "../services/movie-service";
+import { saveMoviesService } from "../services/save-movies-service";
 
 export const handler = async (event: S3Event) => {
   const bucket = event.Records[0].s3.bucket.name;
@@ -20,7 +21,7 @@ export const handler = async (event: S3Event) => {
 
     const movies = JSON.parse(fileContent);
     const enrichedMovies = await movieService().processMoviesInBatches(movies);
-    await dbService().saveMovies(enrichedMovies);
+    await saveMoviesService().saveMovies(enrichedMovies);
   } catch (error: unknown) {
     console.error((error as Error).message);
   }

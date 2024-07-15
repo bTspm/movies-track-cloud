@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Movie, MovieRequest } from "../models/Movie.type";
-import { TmdbGenresResponse, TmdbProvidersResponse, TMDBSearchResponse } from "../models/Tmdb.type";
+import { Movie, MovieRequest } from "../domain/Movie.type";
+import { TmdbGenresResponse, TmdbProvidersResponse, TMDBSearchResponse } from "../domain/Tmdb.type";
 
 const MOVIE_BATCH_SIZE = 20;
 

@@ -1,21 +1,14 @@
 import { MovieEntity } from "../db/MovieEntity";
 import { Table } from "../db/Table";
-import { Movie } from "../models/Movie.type";
+import { Movie } from "../domain/Movie.type";
 
 const MAX_DYNAMODB_UPDATE_ITEMS = 25;
 
 export type DbServiceResponse = {
-  getMovies: () => Promise<Movie[]>;
   saveMovies: (movies: Movie[]) => Promise<void>;
 };
 
-export const dbService = (): DbServiceResponse => {
-  const getMovies = async (): Promise<Movie[]> => {
-    const { Items } = await MovieEntity.scan<Movie>();
-
-    return Items ?? []
-  }
-
+export const saveMoviesService = (): DbServiceResponse => {
   const saveMovies = async (movies: Movie[]): Promise<void> => {
     console.log(`Saving total movies: ${ movies.length }`);
     const batches = _chunkArray<Movie>(movies);
@@ -56,8 +49,8 @@ export const dbService = (): DbServiceResponse => {
   const _extractUnprocessedItems = (response: { UnprocessedItems: Record<string, { PutRequest: { Item: Movie } }[]> }): Movie[] => {
     const unprocessedItems: Movie[] = [];
 
-    const responseUnprocessedItems = response.UnprocessedItems[process.env.TABLE_NAME ?? ""]
-    if (responseUnprocessedItems === null || responseUnprocessedItems === undefined) {
+    const responseUnprocessedItems = response.UnprocessedItems[process.env.TABLE_NAME] ?? ""
+    if (responseUnprocessedItems.length === 0) {
       return []
     }
 
@@ -71,7 +64,6 @@ export const dbService = (): DbServiceResponse => {
   };
 
   return {
-    getMovies,
     saveMovies
   }
 }
